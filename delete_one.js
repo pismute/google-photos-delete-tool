@@ -5,15 +5,16 @@ var maxImageCount = "ALL_PHOTOS";
 
 // Selector for Images and buttons
 var ELEMENT_SELECTORS = {
-    checkboxClass: '.ckGgle',
-    deleteButton: 'button[aria-label="Delete"]',
-    confirmationButton: 'button.VfPpkd-LgbsSe.VfPpkd-LgbsSe-OWXEXe-k8QpJ.nCP5yc.kHssdc.HvOprf'
+    checkboxClass: 'input[aria-label="Select all items"]',
+    deleteButton: 'button[aria-label="Delete all selected items"]',
+    confirmationCheckbox: 'input.VfPpkd-muHVFf-bMcfAe',
+    confirmationButton: 'button[data-mdc-dialog-action="delete"]'
 }
 
 // Time Configuration (in milliseconds)
 var TIME_CONFIG = {
-    delete_cycle: 12000,
-    press_button_delay: 2000
+    delete_cycle: 20000,
+    press_button_delay: 1500
 };
 
 var MAX_RETRIES = 10;
@@ -56,17 +57,21 @@ let deleteTask = setInterval(() => {
         buttons.deleteButton.click();
 
         setTimeout(() => {
-            buttons.confirmation_button = document.querySelector(ELEMENT_SELECTORS['confirmationButton']);
-            buttons.confirmation_button.click();
+            let confirmationCheckboxes = document.querySelectorAll(ELEMENT_SELECTORS['confirmationCheckbox']);
+            confirmationCheckboxes.forEach((checkbox) => { checkbox.click() });
 
-            console.log(`[INFO] ${imageCount}/${maxImageCount} Deleted`);
-            if (maxImageCount !== "ALL_PHOTOS" && imageCount >= parseInt(maxImageCount)) {
-                console.log(`${imageCount} photos deleted as requested`);
-                clearInterval(deleteTask);
-                console.log("[SUCCESS] Tool exited.");
-                return;
-            }
+            setTimeout(() => {
+              buttons.confirmation_button = document.querySelector(ELEMENT_SELECTORS['confirmationButton']);
+              buttons.confirmation_button.click();
 
-        }, TIME_CONFIG['press_button_delay']);
+              console.log(`[INFO] ${imageCount}/${maxImageCount} Deleted`);
+              if (maxImageCount !== "ALL_PHOTOS" && imageCount >= parseInt(maxImageCount)) {
+                  console.log(`${imageCount} photos deleted as requested`);
+                  clearInterval(deleteTask);
+                  console.log("[SUCCESS] Tool exited.");
+                  return;
+              }
+          }, TIME_CONFIG['press_button_delay']);
+        }, 1);
     }, TIME_CONFIG['press_button_delay']);
 }, TIME_CONFIG['delete_cycle']);
